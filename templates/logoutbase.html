@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+<title>Hello life</title>
+<script type="text/javascript">
+	function time(){
+		var today = new Date()
+		var hh = today.getHours();
+		var mm = today.getMinutes();
+		var ss = today.getSeconds();
+		document.getElementById("clock").innerHTML="<p>时间:"+hh+":"+mm+":"+ss+"<p>";
+		var myTime=setTimeout("time()",1000);
+	}
+</script>
+<head>
+<body background="{{url_for('static',filename = 'images/bg.jpg')}}" onload="time()">
+	<table>
+<td><a href = "logout"><button  type="sublimt" >退出登陆</button></a></td>
+<td id="clock"></td>
+</table>
+<hr>
+<div>
+	{% block body %}
+    {% endblock %}
+</div>
+</body>

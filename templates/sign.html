@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+</head>
+<body>
+<form action="/signin" method="POST">
+<table>
+	<tr>
+    <td>账号：</td><td><input type = "text" name = "username"></td>
+</tr>
+<tr>
+    <td>密码：</td><td><input type = "password" name = "password"></td>
+</tr>
+</table>
+<button type = "submit">登陆</button>
+</form>
+<a href="/sign"><button type = "submit">注册</button></a>
+{% if flag %}
+<p>登陆失败，请重新登陆</p>
+<p>没有账号请点击注册</p>
+{% endif %}
+<a href="direct"><button type="submit">查看留言</button></a>
+</body>
+</html>

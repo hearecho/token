@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>留言板</title>
+<body background="{{url_for('static',filename = 'images/mbg.jpg')}}">
+{% if flag %}
+<a href = "logout"><button  type="sublimt" >退出登陆</button></a>
+<hr>
+{% endif %}
+<div>
+	{% block body %}
+    {% endblock %}
+</div>
+<hr>
+{% if flag %}
+<form action="/add" method="POST">
+    留言：<textarea name="word" rows=4 cols= 200 ></textarea>
+    <br>
+    <button type = "submit">提交</button>
+</form>
+<a href ="/backuser"><button type="sublimt">返回用户信息界面</button></a>
+{% else %}
+<p ><font size="5" color="red" face="Times">登陆即发布留言</font></p>
+<a href="/home"><button type="sublimt">登陆</button></a>
+{% endif %}
+</body>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <script>
+    function mail(){
+        var x = document.forms["myform"]["eamil"].value;
+        var atpos = x.indexOf("@");
+        var dotpos = x.lastIndexOf(".");
+        if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length){
+        alert("不是一个有效的 e-mail 地址");
+        return false;
+    }
+    }
+</script>
+</head>
+<body>
+
+<form action="/signup" method="POST" name="myform" onsubmit="return mail();">
+<table>
+    <tr>
+    <td>账号：</td><td><input type = "text" name = "username"></td>
+    </tr>
+    <tr>
+    <td>密码：</td><td><input type = "password" name = "password"></td>
+    </tr>
+    <tr>
+    <td>eamil:</td><td><input type = "text" name = "email"></td>
+    </tr>
+    <tr>
+    <td>QQ:</td><td><input type = "text" name = "qq"></td>
+    </tr>
+    <tr>
+    <td>地址:</td><td><input type = "text" name = "location"></td>
+    </tr>
+    <tr>
+    <td>头像选择:</td><td><br><input type="radio" name = "img" value="images/1.jpg"><img src="{{ url_for('static', filename='images/1.jpg') }}" width="30" height="30" alt="test"/>
+    <input type="radio" name = "img" value="images/2.jpg"><img src="{{ url_for('static', filename='images/2.jpg') }}" width="30" height="30" alt="test"/>
+    </td>
+    </tr>
+</table>
+    <button type = "submit">注册确认</button>
+</form>
+{% if flag %}
+<p>注册失败,请重新注册</p>
+{% else %}
+<p></p>
+{% endif %}
+</body>
+</html>

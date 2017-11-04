@@ -1,0 +1,19 @@
+{% extends "messagebase.html" %}
+{% block body %}
+<h3>这是留言板</h3>
+<table border="0" bgcolor="gray" style="table-layout:fixed" width="1500" align="center" >
+{% for items in form%}
+<tr bgcolor="#38B0DE" >
+    <td width = "15%">用户:{{items[0]}} 时间:{{items[1]}}</td>
+    <td width = "85%">邮箱:{{items[3]}} QQ:{{items[4]}}</td>
+</tr>
+<tr>
+    <td><img src="{{items[5]}}" width="30" length = "30" alt="头像"></td>
+    <td style="word-wrap:break-word" align="left" bgcolor="#99CC32" >{{items[2]}}</td>
+</tr>
+<!-- <tr>
+	<a></a>
+</tr> -->
+{% endfor %}
+</table>
+{% endblock %}

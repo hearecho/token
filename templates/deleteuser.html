@@ -1,0 +1,12 @@
+{% extends "logoutbase.html" %}
+{% block body %}
+<form action="/deleteuser" method="POST">
+{% for item in form%}
+{% if item[0] != 'admin' %}
+<input type="checkbox" name="user" value="{{item[0]}}">{{item[0]}} <br>
+{% endif %}
+{% endfor %}
+<input type="submit" value="提交">
+</form>
+<a href = '/admin'><button type="sublimt">返回管理界面</button></a>
+{% endblock%}

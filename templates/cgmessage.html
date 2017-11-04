@@ -1,0 +1,23 @@
+{% extends "logoutbase.html" %}
+{% block body %}
+<form action="/cgmessage" method="POST">
+<table>
+{% for items in form%}
+<tr bgcolor="#38B0DE" >
+    <td width = "10%">时间:{{items[0]}} 用户：{{items[4]}}</td>
+    <td style="word-wrap:break-word" align="left" bgcolor="#99CC32" width="85%"><input type="checkbox" name="user" value="{{items[2]}}">{{items[1]}}</td>
+    {% if items[3] %}
+    <td width = "5%">审核通过</td>
+    {% else %}
+    <td width = "5%">审核中</td>
+    {% endif %}
+</tr>
+{% endfor %}
+</table>
+<input type="submit" value="删除">
+</form>
+<a href="/message"><button type="submit">查看留言</button></a><br>
+{% if flag %}
+<a href = '/admin'><button type="sublimt">返回管理界面</button></a>
+{% endif %}
+{% endblock%}

@@ -1,0 +1,32 @@
+{% extends "logoutbase.html" %}
+{% block body %}
+<!-- <img src="{{ url_for('static', filename='{{img}}') }}" width="100" height="100" alt="test"/> -->
+<table border="0" bgcolor="snow">
+	<tr>
+		<th colspan="2" bgcolor="#FFFFE0">用户个人信息</th>
+	</tr>
+	<tr>
+		<td>头像</td>
+		<td><img src="{{img}}" width="100" height="100" alt="test"/></td>
+	</tr>
+	<tr>
+		<td>用户名:</td>
+		<td>{{form[1]}}</td>
+	</tr>
+	<tr>
+		<td>邮箱:</td>
+		<td>{{form[3]}}</td>
+	</tr>
+	<tr>
+		<td>QQ:</td>
+		<td>{{form[4]}}</td>
+	</tr>
+	<tr>
+		<td>地址:</td>
+		<td>{{form[6]}}</td>
+	</tr>
+</table>
+<a href = "cg"><button  type="sublimt" >修改个人信息(包含密码)</button></a>
+<a href ="message"><button  type="sublimt" >查看留言提交留言</button></a><br>
+<a href="cgm"><button  type="sublimt" >删除自己留言</button></a>
+{% endblock %}
