@@ -1,12 +1,14 @@
 {% extends "logoutbase.html" %}
 {% block body %}
-<form action="/cgpass" method="POST">
-    新密码：<input type = "password" name = "password">
-    <br>
-    新的邮箱：<input type = "text" name = "email">
-    <br>
-    新的QQ:<input type="text" name = "qq">
-    <br>
-    <button type = "submit">修改确认</button>
+{% from "_field.html" import render_field %}
+<form method="POST" action="{{ url_for('cg') }}">
+  {{ form.hidden_tag() }}
+  <table>
+    {{ render_field(form.password) }}
+    {{ render_field(form.confirm) }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.qq) }}
+  </table>
+  {{ form.submit }}
 </form>
 {% endblock %}

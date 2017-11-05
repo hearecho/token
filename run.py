@@ -3,6 +3,12 @@ from flask import request,session,redirect, url_for
 from flask import render_template
 from flask import send_file
 from werkzeug.security import generate_password_hash,check_password_hash#加密
+from wtforms import Form
+from flask_wtf import Form
+from wtforms.fields import (StringField, PasswordField, BooleanField,
+                            SelectField, SelectMultipleField, TextAreaField,
+                            RadioField, SubmitField,IntegerField)
+from wtforms.validators import DataRequired, Length, Email, EqualTo, NumberRange
 import time
 import pymysql
 import random
@@ -19,39 +25,30 @@ connect = {
 }
 db = pymysql.connect(**connect)
 cursor = db.cursor()
-# 该表储存留言
- # sql = '''CREATE TABLE IF NOT EXISTS message (
- #         id int(11) not null auto_increment,
- #         name char(255) default null,
- #         word text(1000) default null,
- #         time char(255) default null,
- #         email char(255) default null,
- #         QQ char(255) default null,
- #         img char(255) default null, 
- #         bianhao1 char(20) default null,
- #         bianhao2 char(20) default null,
- #         audit int(11) default null,
- #         primary key(id)
- #           )engine = innodb;
- #        '''
- #与用户表连接
-# cursor.execute(sql)
-# db.commit()
-# sql1 = '''CREATE TABLE IF NOT EXISTS user (#该表存储个人信息
-#             userid int(11) not null auto_increment,
-#             username char(255) default null,
-#             password char(255) default null,
-#             eamil char(255) default null,
-#             QQ char(255) default null,
-#             img char(255) default null,
-#             location char(255) default null,
-#             bianhao1 char(20) default null,
-#             primary key(userid)
-#             )engine = innodb;
-#         '''
-#两个表之间通过编号联系，每个用户注册时随机生成一个编号
 
-#加密函数
+class Loginform(Form):#登陆类
+    username = StringField('用户名',validators=[DataRequired()])
+    password = PasswordField('密码',validators=[DataRequired()])
+    submit = SubmitField('登陆')
+
+class Registerform(Form):#注册类
+    username = StringField('用户名',validators=[Length(min=2,max=20)])
+    password = PasswordField('密码',validators=[DataRequired(),EqualTo('confirm',message='Passwords must match')])
+    confirm = PasswordField('重复密码')
+    email = StringField('邮箱',validators=[Email()])
+    qq = StringField('QQ',validators=[Length(min=8,max=12)])
+    location = StringField('地址',validators=[DataRequired()])
+    img = RadioField('头像',choices=[('images/1.jpg',"<img src=\"../static/images/1.jpg\" width=\"30\" height=\"30\" alt=\"test\"/>"),('images/2.jpg',"<img src=\"../static/images/2.jpg\" width=\"30\" height=\"30\" alt=\"test\"/>")])
+    accept_terms = BooleanField('我接受用户协议', default='checked',validators=[DataRequired()])
+    submit = SubmitField('注册')
+
+class Cgpassform(Form):#修改信息类
+    password = PasswordField('新的密码',validators=[DataRequired(),EqualTo('confirm',message='Passwords must match')])
+    confirm = PasswordField('重复密码')
+    email = StringField('邮箱')
+    qq = StringField('QQ')
+    submit = SubmitField('确认')
+
 def enPassWord(password):
     return generate_password_hash(password)
 #解析从数据库中得出来的密码
@@ -74,6 +71,7 @@ def checkhash(username):
     results = cursor.fetchone()[0]
     return results
 
+
 web = Flask(__name__)
 web.secret_key = 'you-never-guess'
 StatusCode = False#判别用户登陆状态 全局变量
@@ -82,11 +80,75 @@ StatusCode = False#判别用户登陆状态 全局变量
 @web.route('/',methods=['GET','POST'])#登陆界面加主界面
 def home():
     session['user'] = ''
-    return render_template('sign.html')
+    form = Loginform()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        if isuserexisted(username):
+            pd = checkhash(username)
+            if check_password_hash(pd,password):
+                session['user'] = username
+                session['logged_in'] = True
+                if session['user'] != 'admin':
+                    sql = 'select * from user where username=\'{}\''.format(str(username))
+                    cursor.execute(sql)
+                    results = cursor.fetchone()
+                    img = "../static/"+str(results[5])
+                    return render_template('userdetails.html',form = results,img = img)#登陆成功
+                else:
+                    flash(" {} 欢迎来到管理员后台".format(session['user']),'message')
+                    return redirect('/admin')
+            else:
+                return render_template('sign.html',flag = True,form = form)#登陆失败返回
+        else:
+            return render_template('sign.html',flag = True,form = form)#登陆失败返回
+    return render_template('sign.html',form=form)
 
-@web.route('/sign',methods=['GET'])#主页到注册页面
+@web.route('/sign',methods=['GET','POST'])#主页到注册页面
 def sign():
-    return render_template('signup.html')
+    form = Registerform()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        pd = enPassWord(password)
+        email = form.email.data 
+        qq = form.qq.data
+        location = form.location.data
+        img = form.img.data
+        s = (username,)
+        sql = 'select username from user where username=\'{}\' '.format(str(username))
+        cursor.execute(sql)
+        results = cursor.fetchone()
+        if s!=results:
+            sql = "insert into user(username,password,eamil,QQ,img,location,bianhao) values('{}','{}','{}','{}','{}','{}','{}')".format(username,pd,email,qq,img,location,''.join(random.sample(string.ascii_letters + string.digits, 8)))
+            cursor.execute(sql)
+            db.commit()
+            return redirect('/home')
+        else:
+            return render_template('signup.html',flag = True,form=form)
+    return render_template('signup.html',form = form)
+
+@web.route('/cg',methods=['GET','POST'])#转换到修改信息界面
+def cg():
+    form = Cgpassform()
+    if session['user'] != '':
+        if form.validate_on_submit():
+            password = enPassWord(form.password.data)
+            email = form.email.data
+            qq = form.email.data
+            d = {'password':password,'eamil':email,'QQ':qq}
+            for key,value in d.items():
+                if value != '':
+                    sql = "update user set {}=\'{}\' where username=\'{}\'".format(key,value,str(session['user']))
+                    cursor.execute(sql)
+                    db.commit()
+                else:
+                    continue
+            session['user'] = ''
+            return redirect('/home')
+        return render_template('cgpass.html',form=form)
+    else:
+        return redirect('/home')
 
 @web.route('/cgm',methods=['GET','POST'])#等会重定向用
 def cgm():
@@ -114,32 +176,6 @@ def cgmessage():
     else:
         return redirect('/home')
 
-@web.route('/signup',methods=['GET','POST'])#注册成功后转到登陆界面
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        pd = enPassWord(password)#进行加密处理
-        email = request.form['email']
-        qq = request.form['qq']
-        location = request.form['location']
-        img = request.form['img']
-        if not (password and username):
-            return render_template('signup.html')#用户名和密码不能为空
-        s = (username,)
-        sql = 'select username from user where username=\'{}\' '.format(str(username))
-        cursor.execute(sql)
-        results = cursor.fetchone()
-        if s!=results:#判断是否存在
-        	# salt = ''.join(random.sample(string.ascii_letters + string.digits, 8))随机字符串编号
-            sql = "insert into user(username,password,eamil,QQ,img,location,bianhao) values('{}','{}','{}','{}','{}','{}','{}')".format(username,pd,email,qq,img,location,''.join(random.sample(string.ascii_letters + string.digits, 8)))
-            cursor.execute(sql)
-            db.commit()
-            return render_template('sign.html')
-        else:
-            return render_template('signup.html',flag = True)
-    if request.method == 'GET':
-        return render_template('signup.html')
 
 
 @web.route('/deleteuser',methods=['GET','POST'])
@@ -164,64 +200,6 @@ def admin():
         return render_template('admin.html')
     else:
         return redirect('/home')
-
-@web.route('/signin',methods=['GET','POST'])
-def signin():
-    username = request.form['username']
-    password = request.form['password']
-    if isuserexisted(username):
-        pd = checkhash(username)
-        if check_password_hash(pd,password):
-            session['user'] = username
-            session['logged_in'] = True
-            if session['user'] != 'admin':
-                sql = 'select * from user where username=\'{}\''.format(str(username))
-                cursor.execute(sql)
-                results = cursor.fetchone()
-                img = "../static/"+str(results[5])
-                return render_template('userdetails.html',form = results,img = img)#登陆成功
-            else:
-                flash(" {} 欢迎来到管理员后台".format(session['user']),'message')
-                return redirect('/admin')
-        else:
-            return render_template('sign.html',flag = True)#登陆失败返回
-    else:
-        return render_template('sign.html',flag = True)#登陆失败返回
-
-@web.route('/cg',methods=['GET','POST'])#转换到修改信息界面
-def cg():
-    if session['user'] != '':
-        return render_template('cgpass.html')
-    else:
-        return redirect('/home')
-
-@web.route('/cgpass',methods=['GET','POST'])#修改信息
-def cgpass():
-    if session['user']!='':
-        password = enPassWord(request.form['password'])
-        email = request.form['email']
-        qq = request.form['qq']
-        # if password and email and qq:
-        #     sql = '''update user set password=\'{}\',eamil=\'{}\',QQ=\'{}\' where username = \'{}\';'''.format(password,email,qq,str(session['user']))
-        #     cursor.execute(sql)
-        #     db.commit()
-        #     return render_template('sign.html')
-        # else:
-        #     return render_template('cgpass.html')
-        d = {'password':password,'eamil':email,'QQ':qq}
-        if password != '':
-            for key,value in d.items():
-                if value != '':
-                    sql = "update user set {}=\'{}\' where username=\'{}\'".format(key,value,str(session['user']))
-                    cursor.execute(sql)
-                    db.commit()
-                else:
-                    continue
-            return redirect('/home')
-        else:
-            return redirect('/cg')
-    else:
-        return render_template('sign.html')
 
 @web.route('/backuser',methods=['GET','POST'])
 def backuser():
