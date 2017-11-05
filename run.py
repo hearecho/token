@@ -227,7 +227,7 @@ def message():
 
 @web.route('/direct',methods=['GET','POST'])
 def direct():
-    sql = 'select name,time,word,email,QQ,img from message'
+    sql = 'select name,time,word,email,QQ,img,bianhao2 from message'
     cursor.execute(sql)
     messagedb = cursor.fetchall()
     return render_template('add.html',flag = False,form=messagedb)#非登录状态只能查看留言
@@ -245,9 +245,14 @@ def add():
             bianhao = results[3]
             datatime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             word = request.form['word']
-            sql = "insert into message(name,word,time,email,QQ,img,bianhao1,bianhao2,audit) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',{})".format(session['user'],word,datatime,email,QQ,img,bianhao,''.join(random.sample(string.ascii_letters + string.digits, 4)),0)
-            cursor.execute(sql)
-            db.commit()
+            if word != '':#检查留言是否为空
+                if session['user'] == 'admin':
+                    sql = "insert into message(name,word,time,email,QQ,img,bianhao1,bianhao2,audit) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',{})".format(session['user'],word,datatime,email,QQ,img,bianhao,''.join(random.sample(string.ascii_letters + string.digits, 4)),1)
+                else:
+                    sql = "insert into message(name,word,time,email,QQ,img,bianhao1,bianhao2,audit) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',{})".format(session['user'],word,datatime,email,QQ,img,bianhao,''.join(random.sample(string.ascii_letters + string.digits, 4)),0)
+                cursor.execute(sql)
+                db.commit()
+            # if 
             return redirect('/message')
         else:
             sql = 'select name,time,word,email,QQ,img,bianhao2 from message where audit = 1'
@@ -285,6 +290,7 @@ def deleteus():
         return render_template('deleteuser.html',form=results)
     else:
         return redirect('/home')
+
 
 
 @web.route('/logout')#退出登录

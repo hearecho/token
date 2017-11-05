@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>登陆</title>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">  
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 {% from "_field.html" import render_field %}
@@ -14,11 +17,11 @@
   </table>
   {{ form.submit }}
 </form>
-<a href="/sign"><button type = "submit">注册</button></a>
+<a href="/sign"><button type = "submit" class="btn btn-default">注册</button></a>
 {% if flag %}
 <p>登陆失败，请重新登陆</p>
 <p>没有账号请点击注册</p>
 {% endif %}
-<a href="direct"><button type="submit">查看留言</button></a>
+<a href="direct"><button type="submit" class="btn btn-default">查看留言</button></a>
 </body>
 </html>
