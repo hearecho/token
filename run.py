@@ -220,10 +220,13 @@ def message():
     sql = 'select name,time,word,email,QQ,img,bianhao2 from message where audit = 1 '
     cursor.execute(sql)
     messagedb = cursor.fetchall()
+    sql = 'select name,time,word,bianhao2 from commit'
+    cursor.execute(sql)
+    commitdb = cursor.fetchall()
     if session['user'] != '':
-        return render_template('add.html',form=messagedb,flag=True)
+        return render_template('add.html',form=messagedb,form1 =commitdb, flag=True)
     else:
-        return render_template('add.html',form=messagedb,flag=False)
+        return render_template('add.html',form=messagedb,form1 =commitdb,flag=False)
 
 @web.route('/direct',methods=['GET','POST'])
 def direct():
@@ -231,6 +234,23 @@ def direct():
     cursor.execute(sql)
     messagedb = cursor.fetchall()
     return render_template('add.html',flag = False,form=messagedb)#非登录状态只能查看留言
+
+@web.route('/commit',methods=['GET','POST'])
+def commit():
+    ms = request.args.get('ms')
+    return render_template('commit.html',ms=ms)
+
+@web.route('/addcommit',methods=['GET','POST'])
+def addcommit():
+    commit = request.form['commit']
+    ua = request.form['ua']
+    datatime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    if commit != '':
+        sql = "insert into commit(name,time,word,bianhao2) values(\'{}\',\'{}\',\'{}\',\'{}\')".format(session['user'],datatime,commit,ua)
+        cursor.execute(sql)
+        db.commit()
+    return redirect('/message')
+
 
 @web.route('/add',methods=['GET','POST'])
 def add():
@@ -252,13 +272,15 @@ def add():
                     sql = "insert into message(name,word,time,email,QQ,img,bianhao1,bianhao2,audit) values(\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',\'{}\',{})".format(session['user'],word,datatime,email,QQ,img,bianhao,''.join(random.sample(string.ascii_letters + string.digits, 4)),0)
                 cursor.execute(sql)
                 db.commit()
-            # if 
             return redirect('/message')
         else:
             sql = 'select name,time,word,email,QQ,img,bianhao2 from message where audit = 1'
             cursor.execute(sql)
             messagedb = cursor.fetchall()
-            return render_template('add.html',form=messagedb,flag=True)
+            sql = 'select name,time,word,bianhao2 from commit'
+            cursor.execute(sql)
+            commitdb = cursor.fetchall()
+            return render_template('add.html',form=messagedb,form1 =commitdb,flag=True)
     else:
         return redirect('/message')
 
