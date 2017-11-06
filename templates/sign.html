@@ -11,7 +11,7 @@
 {% from "_field.html" import render_field %}
 <form method="POST" action="{{ url_for('home') }}">
   {{ form.hidden_tag() }}
-  <table>
+  <table class="table-responsive">
     {{ render_field(form.username) }}
     {{ render_field(form.password) }}
   </table>

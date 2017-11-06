@@ -1,16 +1,16 @@
 {% extends "logoutbase.html" %}
 {% block body %}
 <form action="/auditm" method="POST">
-<table>
+<table class="table table-bordered  table-responsive">
 {% for items in form%}
-<tr bgcolor="#38B0DE" >
+<tr class="active" >
     <td width = "10%">用户:{{items[0]}}</td>
     <td style="word-wrap:break-word" align="left" bgcolor="#99CC32" width="90%"><input type="checkbox" name="user" value="{{items[2]}}">{{items[1]}}</td>
 </tr>
 {% endfor %}
 </table>
-<input type="submit" value="审核通过">
+<input type="submit" value="审核通过" class="btn btn-default">
 </form>
-<a href="/message"><button type="submit">查看留言</button></a>
-<a href = '/admin'><button type="sublimt">返回管理界面</button></a>
+<a href="/message"><button type="submit" class="btn btn-default">查看留言</button></a>
+<a href = '/admin'><button type="sublimt" class="btn btn-default">返回管理界面</button></a>
 {% endblock%}

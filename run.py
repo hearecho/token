@@ -37,7 +37,7 @@ class Registerform(Form):#注册类
     confirm = PasswordField('重复密码')
     email = StringField('邮箱',validators=[Email()])
     qq = StringField('QQ',validators=[Length(min=8,max=12)])
-    location = StringField('地址',validators=[DataRequired()])
+    location = StringField('地址')
     img = RadioField('头像',choices=[('images/1.jpg',"<img src=\"../static/images/1.jpg\" width=\"30\" height=\"30\" alt=\"test\"/>"),('images/2.jpg',"<img src=\"../static/images/2.jpg\" width=\"30\" height=\"30\" alt=\"test\"/>")])
     accept_terms = BooleanField('我接受用户协议', default='checked',validators=[DataRequired()])
     submit = SubmitField('注册')

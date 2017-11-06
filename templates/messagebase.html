@@ -5,7 +5,7 @@
 <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body background="{{url_for('static',filename = 'images/mbg.jpg')}}">
+<body >
 {% if flag %}
 <a href = "logout"><button  type="sublimt" class="btn btn-default" >退出登陆</button></a>
 <hr>
@@ -17,11 +17,13 @@
 </div>
 <hr>
 {% if flag %}
+<table class="table table-bordered  table-responsive">
 <form action="/add" method="POST">
-    留言：<textarea name="word" rows=4 cols= 200 ></textarea>
+    留言：<textarea name="word" ></textarea>
     <br>
     <button type = "submit" class="btn btn-default">提交</button>
 </form>
+</table>
 <a href ="/backuser"><button type="sublimt" class="btn btn-default">返回用户信息界面</button></a>
 {% else %}
 <p ><font size="5" color="red" face="Times">登陆即发布留言</font></p>

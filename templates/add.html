@@ -1,18 +1,18 @@
 {% extends "messagebase.html" %}
 {% block body %}
 <h3>这是留言板</h3>
-<table border="0" bgcolor="#C7C7C7" style="table-layout:fixed" width="1500" align="center" >
+<table class="table table-bordered  table-responsive" >
 {% for items in form%}
-<tr bgcolor="#8DB6CD" >
+<tr class="warning" >
     <td width = "15%">用户:{{items[0]}} 时间:{{items[1]}}</td>
     <td width = "85%">邮箱:{{items[3]}} QQ:{{items[4]}}</td>
 </tr>
-<tr bgcolor="#B2DFEE">
+<tr class="success">
     <td><img src="{{items[5]}}" width="30" length = "30" alt="头像"></td>
     <td style="word-wrap:break-word" align="left" bgcolor="#B2DFEE" >{{items[2]}}</td>
 </tr>
 
-<tr bgcolor="#C7C7C7">
+<tr class="active">
 	<td><a href="/commit?ms={{items[6]}}"><button type="sublimt" class="btn btn-default">评论</button></a></td>
 	<td>
 		<ul>
