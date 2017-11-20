@@ -1,0 +1,35 @@
+{% extends 'base2.html' %}
+{% block title %}修改{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="col-md-4 col-md-offset-4">
+          <form class='form-register' action="/register/" method="post">
+
+              {% if message %}
+                  <div class="alert alert-warning">{{ message }}</div>
+              {% endif %}
+
+              {% csrf_token %}
+
+              <h2 class="text-center">修改密码</h2>
+
+              <div class="form-group">
+                  {{ cginfo_form.password1.label_tag }}
+                  {{ cginfo_form.password1 }}
+              </div>
+              <div class="form-group">
+                  {{cginfo_form.password2.label_tag }}
+                  {{ cginfo_form.password2 }}
+              </div>
+                <div class="form-group">
+                  {{ cginfo_form.captcha.errors }}
+                  {{ cginfo_form.captcha.label_tag }}
+                  {{ cginfo_form.captcha }}
+              </div>
+              <button type="reset" class="btn btn-default pull-left">重置</button>
+              <button type="submit" class="btn btn-primary pull-right">提交</button>
+
+          </form>
+        </div>
+    </div> <!-- /container -->
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}主页{% endblock %}
+{% block content %}
+    <h1 align ="center">留言板</h1>
+    <hr>
+    <div>
+    {% for message in messages %}
+            <h4 align="center">{{ message.title }}</h4>
+            <p>{{ message.perinfo.name }}</p>
+            <p>邮箱:{{ message.perinfo.email }},QQ:{{ message.perinfo.qq }}</p>
+            <p>{{ message.pub_time|date}}</p>
+            <p>{{ message.content}}</p>
+            <hr>
+    {% endfor %}
+    </div>
+{% endblock %}

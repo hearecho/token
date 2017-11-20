@@ -1,0 +1,20 @@
+{% extends 'base2.html' %}
+{% block title %}我的留言{% endblock %}
+{% block content %}
+    <h1 align ="center">我的留言</h1>
+    <hr>
+    {% if not messages %}
+        <h3>暂时没有留言</h3>
+    {% endif %}
+    {% for message in messages %}
+            <h4 align="center">{{ message.title }}</h4>
+            <p>{{ message.pub_time|date}}</p>
+            <p>{{ message.content}}</p>
+        <form action="/delselfms/" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="{{ message.id }}" name="data"  />
+        <button type="submit" class="btn btn-primary col-lg-pull-0">删除</button>
+        </form>
+            <hr>
+        {% endfor %}
+{% endblock %}
